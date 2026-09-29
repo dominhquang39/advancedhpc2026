@@ -1,0 +1,5 @@
+# Ignore everything inside lab folders, only keep .ipynb, .tex and .pdf files
+/lab*/*
+!/lab*/*.ipynb
+!/lab*/*.tex
+!/lab*/*.pdf
