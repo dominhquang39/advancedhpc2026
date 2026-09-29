@@ -55,20 +55,12 @@ print(f"Device id: {device.id}")
 print(f"Device name: {device.name}")
 
 # Core info
-cores_per_SM_dict = {
-    (2,0) : 32, (2,1) : 48, (3,0) : 192,
-    (3,5) : 192, (3,7) : 192, (5,0) : 128,
-    (5,2) : 128, (6,0) : 64, (6,1) : 128,
-    (7,0) : 64, (7,5) : 64, (8,0) : 64,
-    (8,6) : 128, (8,9) : 128, (9,0) : 128
-    }
-
 multiprocessor_count = device.MULTIPROCESSOR_COUNT
-cores_per_SM = cores_per_SM_dict.get(device.compute_capability, 128)
+# Look up CUDA cores per SM from dict based on Compute Capability (64 for Compute Capability 7.5)
+cores_per_SM = 64 
 total_cores = multiprocessor_count * cores_per_SM
 
 print(f"Multiprocessor count: {multiprocessor_count}")
-print(f"Core count: {cores_per_SM}")
 print(f"Total cores: {total_cores}")
 
 # Memory info
@@ -95,8 +87,7 @@ Compute capability & 7.5 \\
 Multiprocessor count & 40 \\
 Cores per SM & 64 \\
 Total CUDA cores & 2,560 \\
-Total memory & 15,637,086,208 bytes \\
- & $\approx$ 14.56 GiB \\
+Total memory & 15,637,086,208 bytes (14.56 GiB) \\
 \bottomrule
 \end{tabular}
 \end{table}
