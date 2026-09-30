@@ -3,6 +3,7 @@
 \usepackage{xcolor}
 \usepackage{graphicx}
 \usepackage{subcaption}
+\usepackage{booktabs}
 \usepackage{float}
 \usepackage{titling}
 \setlength{\droptitle}{-3cm}
@@ -31,7 +32,7 @@ University of Science and Technology of Hanoi
 \maketitle
 
 \section{RGB to Grayscale Conversion}
-This labwork is about converting an RGB image to Grayscale image on CPU and GPU in order to observe the boost up of GPU over CPU. A 256x256 RGB image is used for the experiment. 
+This labwork is about converting an RGB image to Grayscale image on CPU and GPU in order to observe the boost up of GPU over CPU. The experiment uses 2 RGB images of different resolutions, $256 \times 256$ and $3167 \times 3167$ to examine how image size affects execution time. 
 
 \begin{figure}[H]
     \centering
@@ -67,7 +68,21 @@ For the GPU version, the flattened RGB image is first transferred from CPU memor
 \section{Results}
 
 \subsection{CPU and GPU performance}
-For the quantitative results, GPU boosts the performance by reducing the execution time from 0.1841 seconds on the CPU to 0.0872 seconds on the GPU. This corresponds to a speedup of approximately 2 times.
+For the quantitative results, Table~\ref{tab:performance} shows that the GPU achieved a speedup of approximately 2 times for the $256 \times 256$ image and 188 times for the $3167 \times 3167$ image. These results shows that the performance difference between CPU and GPU becomes noticeable only when processing sufficiently large images.
+
+\begin{table}[H]
+\centering
+\caption{Execution time of CPU and GPU implementations for different image sizes.}
+\label{tab:performance}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Image Size} & \textbf{CPU (s)} & \textbf{GPU (s)} \\
+\midrule
+$256 \times 256$ & 0.1841 & 0.0872 \\
+$3167 \times 3167$ & 21.1528 & 0.1126 \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 For the qualitative result, both implementations produced visually consistent grayscale images. However, the GPU image version appears slightly sharper, possibly due to differences in data types or numerical operations during computation, as shown in Figure~\ref{fig:qualitative}.
 
@@ -89,7 +104,7 @@ For the qualitative result, both implementations produced visually consistent gr
 \end{figure}
 
 \subsection{Impact of block size}
-The GPU process is also evaluated with different block sizes to investigate their impact on execution time. The results are presented in Figure~\ref{fig:block_size}. 
+In this part the 3167x3167 image is used to evaluate the impact of block size on GPU execution time. The block size is varied from 1 to 1024 threads, and the corresponding execution times are recorded. The results are presented in Figure~\ref{fig:block_size}. 
 
 \begin{figure}[H]
 \centering
@@ -98,6 +113,10 @@ The GPU process is also evaluated with different block sizes to investigate thei
 \label{fig:block_size}
 \end{figure}
 
-The measured running time generally decreases as the block size increases. Smaller blocks require more blocks to process the same number of pixels, potentially increasing scheduling overhead. Larger blocks can improve execution efficiency by reducing this overhead. However, the performance gain becomes marginal between block size of 128 and 256. Among the tested configurations, a block size of 256 achieved the shortest execution time of 0.000505 seconds, while a block size of 1 resulted in the longest time of 0.001885 seconds.
+The measured running time generally decreases as the block size increases. However, the performance gain becomes marginal between block size of 128 and 1024. Among the tested configurations, a block size of 512 achieved the shortest execution time of 0.015299 seconds, while a block size of 1 resulted in the longest time of 0.095496 seconds.
+
+
+\section{Conclusion}
+The results show that GPU parallelism provides greater performance benefits for sufficiently large images. Block size also affects GPU performance, with the optimal configuration depending on the workload and hardware architecture.
 
 \end{document}
