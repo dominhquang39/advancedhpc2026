@@ -56,7 +56,8 @@ Both implementations are executed 10 times, and the average execution time and s
 The comparison uses a 1D block size of 1024 threads and a 2D block size of $(32, 32)$, which also contains 1024 threads per block. The 1D implementation takes an average of 0.0201 seconds, while the 2D implementation takes 0.0200 seconds. These results indicate nearly identical performance between the two configurations.
 
 \subsection{Impact of block size}
-The block size is varied and the corresponding execution times are recorded. The results are presented in Figure~\ref{fig:block_size}. 
+The block size is varied and the corresponding execution times are recorded. Each configuration is executed 10 times, and the average execution time is reported. 
+The results are presented in Figure~\ref{fig:block_size}.
 
 \begin{figure}[H]
 \centering
@@ -65,8 +66,21 @@ The block size is varied and the corresponding execution times are recorded. The
 \label{fig:block_size}
 \end{figure}
 
-The results show that block size has a noticeable impact on execution time. The $(16,16)$ and $(32,32)$ configurations take approximately 0.03 and 0.024 seconds, respectively. In contrast, the $(16,32)$ and $(32,16)$ configurations achieve lower execution times of approximately 0.017 and 0.016 seconds.
+The results show that block size has a noticeable impact on execution time. Small configurations such as $(8,8)$ and $(8,16)$ show the highest execution times, around 0.021 seconds. As the block dimensions increase, the execution time generally decreases. The best performance is obtained with the $(32,16)$ configuration, achieving an average execution time of 0.0164 seconds.
 
-The $(32,16)$ configuration achieves the lowest execution time among the tested block sizes. Although $(32,32)$ contains more threads per block, it does not provide better performance.
+\section{Answering questions}
+\subsection{Question 1}
+The GPU has a maximum capacity of 512 threads per block and 1024 threads per streaming multiprocessor (SM). Among the given configurations, $(32,32)$ is not valid because it requires 1024 threads/block.
 
+which exceeds the hardware limit. For the $(8,8)$ configuration, each block contains 64 threads. Therefore, one SM could theoretically accommodate 16 blocks. However, the GPU supports a maximum of 8 blocks per SM, so the block limit becomes the restricting factor.
+
+Therefore, the selected configuration is $(16, 16)$, with each block contains 254 threads and 4 blocks/SM.
+
+\subsection{Question 2}
+With the 128 and 256 threads/block configurations achieve the maximum of 512 and 1024 threads if using all 4 blocks. The 1024 threads/block configuration cannot fully utilize the SM capacity because the block limit restricts execution to a single block, leaving 512 unused threads.
+
+Therefore, using 3 blocks of 512 threads can fully utilize all 1536 threads and still ensure the number of block not exceeds 4.
+
+\subsection{Question 3}
+We need at least 4 blocks of 512 threads to process all 2000 elements in the vector. So it will produce a grid of $512 \times 4 = 2048$ threads.
 \end{document}
