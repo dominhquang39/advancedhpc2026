@@ -70,9 +70,7 @@ The results show that block size has a noticeable impact on execution time. Smal
 
 \section{Answering questions}
 \subsection{Question 1}
-The GPU has a maximum capacity of 512 threads per block and 1024 threads per streaming multiprocessor (SM). Among the given configurations, $(32,32)$ is not valid because it requires 1024 threads/block.
-
-which exceeds the hardware limit. For the $(8,8)$ configuration, each block contains 64 threads. Therefore, one SM could theoretically accommodate 16 blocks. However, the GPU supports a maximum of 8 blocks per SM, so the block limit becomes the restricting factor.
+The GPU has a maximum capacity of 512 threads per block and 1024 threads per streaming multiprocessor (SM). Among the given configurations, $(32,32)$ is not valid because it requires 1024 threads/block which exceeds the hardware limit. For the $(8,8)$ configuration, each block contains 64 threads. Therefore, one SM could theoretically accommodate 16 blocks. However, the GPU supports a maximum of 8 blocks per SM, so the block limit becomes the restricting factor.
 
 Therefore, the selected configuration is $(16, 16)$, with each block contains 254 threads and 4 blocks/SM.
 
