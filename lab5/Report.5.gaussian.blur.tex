@@ -62,6 +62,16 @@ For the qualitative results, the image is blurred after applying the Gaussian fi
 
 For the quantitative performance comparison, all implementations are executed 10 times, and the average execution time and standard deviation are recorded. A warm-up execution is performed before measurement to reduce the impact of initial CUDA overhead. CPU computation took an average of 68.1927 seconds, while the GPU global memory implementation took 0.0070 seconds, and the GPU shared memory implementation took 0.0061 seconds. Both GPU implementations are significantly faster than the CPU, achieving speedups of approximately $9742\times$ and $11179\times$ for the global and shared memory versions, respectively. The shared memory implementation is approximately $12.9\%$ faster than the global memory version.
 
+\subsection{Experimenting different 2D block size}
+We evaluated different 2D block sizes for both GPU implementations to identify their performance trends. As shown in Figure~\ref{fig:block_size_results}, execution time generally decreases with increasing block size, although some variations occur across configurations. Both implementations exhibit similar trends, with shared memory achieving lower execution times in most cases.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figure/share_vs_global_2d_different.png}
+\caption{GPU Global Memory vs Shared Memory Performance.}
+\label{fig:block_size_results}
+\end{figure}
+
 \subsection{Conclusion}
 GPU parallelization substantially reduces execution time compared to the CPU. Using shared memory further improves performance by enabling efficient reuse of filter values within each thread block.
 
