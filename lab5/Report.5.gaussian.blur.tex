@@ -1,0 +1,69 @@
+\documentclass[11pt]{article}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{titling}
+\setlength{\droptitle}{-3cm}
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{green!50!black},
+    backgroundcolor=\color{gray!5},
+    frame=single,
+    rulecolor=\color{gray!40},
+    breaklines=true,
+    captionpos=b,
+    showstringspaces=false
+}
+
+\title{\textbf{Labwork 5 - Shared memory optimization}}
+\author{
+Do Minh Quang - 2540095\\
+University of Science and Technology of Hanoi
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Shared memory optimization for Gaussian filter}
+In this labwork, we replace the grayscale kernel with a Gaussian blur kernel. And we also learn how to use shared memory to improve the performance. The experiment uses $718 \times 718$ RGB image.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{figure/wc.jpg}
+    \caption{Input image.}
+\end{figure}
+
+The blurry output image is generate by applying a $7 \times 7$ Gaussian blur filter to the input image. The global memory implementation directly accesses the filter values from global memory during the convolution process. Since the same filter elements are repeatedly accessed by multiple threads, this results in redundant global memory reads.
+
+In the shared memory implementation, the filter is first loaded into shared memory by the threads in each block. After synchronization using \texttt{cuda.syncthreads()}, all threads in the block can reuse the filter values from the faster shared memory instead of accessing global memory repeatedly.
+
+\section{Results}
+For the qualitative results, the image is blurred after applying the Gaussian filter. The CPU and GPU implementations produce the same blur quality when applying the same Gaussian filter, as the difference between them lies in computational performance rather than output quality.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.23\textwidth]{figure/wc.jpg}
+    \hfill
+    \includegraphics[width=0.23\textwidth]{figure/blurred_cpu_gauss_filter.jpg}
+    \hfill
+    \includegraphics[width=0.23\textwidth]{figure/blurred_gpu_global_g.jpg}
+    \hfill
+    \includegraphics[width=0.23\textwidth]{figure/blurred_gpu_shared_gf.jpg}
+    \caption{Comparison of Gaussian blur implementations. From left to right: a) original image, b) CPU implementation, c) GPU global memory implementation, d) GPU shared memory implementation.}
+    \label{fig:blur_comparison}
+\end{figure}
+
+For the quantitative performance comparison, all implementations are executed 10 times, and the average execution time and standard deviation are recorded. A warm-up execution is performed before measurement to reduce the impact of initial CUDA overhead. CPU computation took an average of 68.1927 seconds, while the GPU global memory implementation took 0.0070 seconds, and the GPU shared memory implementation took 0.0061 seconds. Both GPU implementations are significantly faster than the CPU, achieving speedups of approximately $9742\times$ and $11179\times$ for the global and shared memory versions, respectively. The shared memory implementation is approximately $12.9\%$ faster than the global memory version.
+
+\subsection{Conclusion}
+GPU parallelization substantially reduces execution time compared to the CPU. Using shared memory further improves performance by enabling efficient reuse of filter values within each thread block.
+
+
+\end{document}
