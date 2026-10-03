@@ -52,12 +52,14 @@ For image blending, corresponding pixels from two images are combined using
 \[
 Q(x,y)=c\Phi_1(x,y)+(1-c)\Phi_2(x,y),
 \]
-where $c=0.5$ in this experiment. 
+In this experiments, $c$ value is varied, where lower $c$ value result in a image that is more similar to the second image, while higher $c$ value result in a image that is more similar to the first image. 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.4\textwidth]{figure/blend_gpu_2D.jpg}
-    \caption{Blending images.}
+    \includegraphics[width=0.32\textwidth]{figure/blend_gpu_2D_cr.jpg}
+    \includegraphics[width=0.32\textwidth]{figure/blend_gpu_2D.jpg}
+    \includegraphics[width=0.32\textwidth]{figure/blend_gpu_2D_wc.jpg}
+    \caption{Blending images. a) $c=0.2$, b) $c=0.5$, c) $c=0.8$.}
 \end{figure}
 
 \section{Results}
