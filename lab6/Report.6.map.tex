@@ -1,0 +1,107 @@
+\documentclass[11pt]{article}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{titling}
+\setlength{\droptitle}{-3cm}
+
+\title{\textbf{Labwork 6 - Map}}
+\author{
+Do Minh Quang - 2540095\\
+University of Science and Technology of Hanoi
+}
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{GPU Map Implementations}
+In this labwork, we will learn how to perform mapping functions inside the CUDA kernel. Three image processing operations are implemented using 2D CUDA grids. The same $718 \times 718$
+image as in the previous labwork is used. A second image
+of the same size is used for blending.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.48\textwidth]{figure/wc.jpg} \hfill
+    \includegraphics[width=0.48\textwidth]{figure/cr.jpg}
+    \caption{Input images ($718 \times 718$).}
+\end{figure}
+
+For binarization, the RGB values of each pixel are first averaged to obtain a grayscale intensity. A threshold of 128 is then applied: pixels below the threshold are set to 0, while the others are set to 255. The resulting value is written to all three RGB channels.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth]{figure/binary_gpu_2D.jpg}
+    \caption{Binary image.}
+\end{figure}
+
+For brightness control, a constant value of 100 is added
+to or subtracted from each RGB channel to produce brighter
+and darker images, respectively. The resulting values
+are clipped to the range $[0,255]$ to prevent overflow
+and underflow.  
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.48\textwidth]{figure/brighter_gpu_2D.jpg} \hfill
+    \includegraphics[width=0.48\textwidth]{figure/darker_gpu_2D.jpg}
+    \caption{Brightness control images.}
+\end{figure}
+
+For image blending, corresponding pixels from two images are combined using
+\[
+Q(x,y)=c\Phi_1(x,y)+(1-c)\Phi_2(x,y),
+\]
+where $c=0.5$ in this experiment. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.4\textwidth]{figure/blend_gpu_2D.jpg}
+    \caption{Blending images.}
+\end{figure}
+
+\section{Results}
+The GPU implementations were measured over 10 runs for each 2D block size. A warm-up run was performed before timing. The measured time includes transferring image data to the GPU and copying the result back to the host.
+
+\begin{table}[H]
+\centering
+\caption{Average GPU execution time ($\mathrm{ms}\pm\mathrm{std}$) for different 2D block sizes.}
+\label{tab:block_sizes}
+\begin{tabular}{lccc}
+\toprule
+Block size & Binarization & Brightness & Blending\\
+\midrule
+$8\times8$   & $2.2\pm0.6$ & $2.5\pm0.8$ & $3.7\pm0.9$\\
+$8\times16$  & $2.3\pm0.6$ & $2.0\pm0.5$ & $3.4\pm0.7$\\
+$16\times8$  & $2.3\pm0.6$ & $2.6\pm0.9$ & $3.4\pm0.7$\\
+$8\times32$  & $2.6\pm0.9$ & $2.3\pm0.7$ & $3.4\pm0.7$\\
+$32\times8$  & $2.3\pm0.6$ & $2.3\pm0.6$ & $3.5\pm0.7$\\
+$16\times16$ & $2.3\pm0.6$ & $2.2\pm0.6$ & $3.4\pm0.7$\\
+$32\times32$ & $2.4\pm0.6$ & $2.3\pm0.6$ & $3.6\pm0.9$\\
+$16\times32$ & $2.3\pm0.6$ & $2.2\pm0.6$ & $3.4\pm0.7$\\
+$32\times16$ & $2.3\pm0.6$ & $2.5\pm0.9$ & $3.5\pm0.8$\\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Binarization and brightness control have comparable execution times across the tested block sizes, with their average times generally falling within a similar range at $2.0$--$2.6$ (ms). Blending takes longer, with execution times of $3.4$--$3.7$ (ms), as each thread needs to access two input images instead of one.
+
+The execution time remains relatively stable across
+different block sizes, with no consistent improvement
+as the block size increases. Binarization is fastest
+with $8\times8$ blocks (2.2 ms), while brightness
+control is fastest with $8\times16$ blocks (2.0 ms).
+For blending, several configurations achieve the
+lowest average time of 3.4 ms.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.78\textwidth]{figure/blocksize_2d_different.png}
+\caption{GPU execution time for different 2D block sizes.}
+\label{fig:block_size}
+\end{figure}
+
+\subsection{Conclusion}
+Across the tested configurations, execution times remain relatively stable, with no single block size providing the lowest time for all operations.
+
+\end{document}
